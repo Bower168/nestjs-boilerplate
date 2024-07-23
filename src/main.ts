@@ -1,8 +1,9 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { BuildSwaggerDocument } from './core/swagger/swagger';
 import * as morgan from 'morgan';
+import { AllExceptionsFilter } from './core/interceptor/global.interceptor';
 
 async function bootstrap() {
   const logger = new Logger('bootstrap');
@@ -22,6 +23,8 @@ async function bootstrap() {
     app.use(morgan('dev'));
     BuildSwaggerDocument(app);
   }
+  const httpAdapter = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
 
   await app.listen(process.env.PORT).then(() => {
     logger.verbose(`Server is running on http://localhost:${process.env.PORT}`);
