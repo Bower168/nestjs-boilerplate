@@ -1,5 +1,5 @@
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
-import { AuthDto } from '../dto/auth.dto';
+import { SignInDto, SignUpDto } from '../dto/auth.dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
@@ -13,7 +13,7 @@ export class AuthService {
     private jwt: JwtService,
   ) {}
 
-  async signUp(signupDetail: AuthDto) {
+  async signUp(signupDetail: SignUpDto) {
     const hashedPassword = await argon.hash(signupDetail.password);
     try {
       return await this.userRepository.create({
@@ -28,7 +28,7 @@ export class AuthService {
     }
   }
 
-  async signIn(signupDetail: AuthDto) {
+  async signIn(signupDetail: SignInDto) {
     const user = await this.userRepository.findOne({
       where: {
         email: signupDetail.email,
