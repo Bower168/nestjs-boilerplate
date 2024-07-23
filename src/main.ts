@@ -22,7 +22,7 @@ async function bootstrap() {
   }
 
   await app.listen(process.env.PORT).then(() => {
-    logger.debug(`Server is running on http://localhost:${process.env.PORT}`);
+    logger.verbose(`Server is running on http://localhost:${process.env.PORT}`);
   });
 }
 bootstrap();
