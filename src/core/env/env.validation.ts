@@ -1,5 +1,12 @@
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsNumber, Max, Min, validateSync } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsString,
+  Max,
+  Min,
+  validateSync,
+} from 'class-validator';
 
 enum Environment {
   Development = 'development',
@@ -16,6 +23,32 @@ class EnvironmentVariables {
   @Min(0)
   @Max(65535)
   PORT: number;
+
+  @IsString()
+  JWT_SECRET: string;
+
+  @IsEnum(['mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'])
+  DB_TYPE: string;
+
+  @IsString()
+  DB_HOST: string;
+
+  @IsNumber()
+  @Min(0)
+  @Max(65535)
+  DB_PORT: number;
+
+  @IsString()
+  DB_USERNAME: string;
+
+  @IsString()
+  DB_PASSWORD: string;
+
+  @IsString()
+  DB_NAME: string;
+
+  @IsEnum(['true', 'false'])
+  DB_SYNC: string;
 }
 
 export function validate(config: Record<string, unknown>) {
