@@ -1,9 +1,9 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../service';
-import { SignInDto, SignUpDto } from '../dto';
+import { RefreshTokenDto, SignInDto, SignUpDto } from '../dto';
 
-@ApiTags('@Transaction')
+@ApiTags('Auth')
 @ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
@@ -20,5 +20,10 @@ export class AuthController {
   @Post('register')
   async register(@Body() registerDto: SignUpDto) {
     return this.authService.signUp(registerDto);
+  }
+
+  @Post('refresh')
+  async refresh(@Body() refreshToken: RefreshTokenDto) {
+    return this.authService.refreshToken(refreshToken.refreshToken);
   }
 }

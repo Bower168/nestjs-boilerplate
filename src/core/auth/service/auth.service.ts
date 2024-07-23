@@ -1,9 +1,15 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { SignInDto, SignUpDto } from '../dto/auth.dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { User } from 'src/entity/user/user.entity';
+import * as _ from 'lodash';
 
 @Injectable()
 export class AuthService {
@@ -15,17 +21,18 @@ export class AuthService {
 
   async signUp(signupDetail: SignUpDto) {
     const hashedPassword = await argon.hash(signupDetail.password);
-    try {
-      return await this.userRepository.create({
-        email: signupDetail.email,
-        password: hashedPassword,
-      });
-    } catch (error) {
-      if (error.code === 'P2002') {
-        throw new ForbiddenException('Credentials already in use');
-      }
-      return error;
+    const user = await this.userRepository.findOneBy({
+      email: signupDetail.email,
+    });
+    if (user) {
+      throw new HttpException('User already exist', 409);
     }
+    const result = await this.userRepository.save({
+      name: signupDetail.name,
+      email: signupDetail.email,
+      password: hashedPassword,
+    });
+    return _.pick(result, ['id', 'name', 'email']);
   }
 
   async signIn(signupDetail: SignInDto) {
@@ -43,7 +50,7 @@ export class AuthService {
       const result = await argon.verify(user.password, signupDetail.password);
       if (result) {
         delete user.password;
-        return this.generateToken(user.id, user.email);
+        return this.generateToken(user.id, user.email, signupDetail.rememberMe);
       } else {
         throw new ForbiddenException('Credentials not match');
       }
