@@ -70,6 +70,9 @@ export class AuthService {
         expiresIn: process.env.JWT_REMEMBER_EXPIRES_IN,
         secret: process.env.JWT_SECRET,
       });
+      await this.userRepository.update(payload.userId, {
+        remember_token: rememberToken,
+      });
       return { access_token: token, remember_token: rememberToken };
     }
     return { access_token: token };
@@ -79,6 +82,6 @@ export class AuthService {
     const payload = await this.jwt.verifyAsync(token, {
       secret: process.env.JWT_SECRET,
     });
-    return this.generateToken(payload.userId, payload.email);
+    return this.generateToken(payload.userId, payload.email, true);
   }
 }
