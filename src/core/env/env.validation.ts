@@ -27,6 +27,18 @@ class EnvironmentVariables {
   @IsString()
   JWT_SECRET: string;
 
+  @IsString()
+  TZ: string;
+
+  @IsString()
+  JWT_EXPIRES_IN: string;
+
+  @IsString()
+  JWT_REMEMBER_EXPIRES_IN: string;
+
+  @IsString()
+  CORS_ORIGIN: string;
+
   @IsEnum(['mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'])
   DB_TYPE: string;
 

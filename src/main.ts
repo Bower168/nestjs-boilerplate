@@ -12,11 +12,14 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN.split(','),
+  });
   if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
     BuildSwaggerDocument(app);
+    app.enableCors({ origin: true });
   }
-  app.enableCors({ origin: true }); // app.enableCors({ origin: ['https://example1.com', 'https://example2.com'] });
 
   await app.listen(process.env.PORT).then(() => {
     logger.debug(`Server is running on http://localhost:${process.env.PORT}`);
