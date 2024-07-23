@@ -14,8 +14,8 @@ export class AuthController {
     private readonly authService: AuthService,
   ) {}
 
-  @UseGuards(JwtGuard)
   @Get('me')
+  @UseGuards(JwtGuard)
   async me(@GetUser() user) {
     return user;
   }
