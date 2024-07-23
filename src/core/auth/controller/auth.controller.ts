@@ -1,7 +1,9 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../service';
 import { RefreshTokenDto, SignInDto, SignUpDto } from '../dto';
+import { GetUser } from '../decorator';
+import { JwtGuard } from '../guard';
 
 @ApiTags('Auth')
 @ApiBearerAuth()
@@ -11,6 +13,12 @@ export class AuthController {
     @Inject(AuthService)
     private readonly authService: AuthService,
   ) {}
+
+  @UseGuards(JwtGuard)
+  @Get('me')
+  async me(@GetUser() user) {
+    return user;
+  }
 
   @Post('login')
   async login(@Body() loginDto: SignInDto) {
