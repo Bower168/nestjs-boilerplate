@@ -13,12 +13,14 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: process.env.CORS_ORIGIN.split(','),
+    origin:
+      process.env.CORS_ORIGIN.split(',')[0] === '*'
+        ? '*'
+        : process.env.CORS_ORIGIN.split(','),
   });
   if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
     BuildSwaggerDocument(app);
-    app.enableCors({ origin: true });
   }
 
   await app.listen(process.env.PORT).then(() => {
